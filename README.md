@@ -32,6 +32,13 @@ The architecture uses AWS services (SQS FIFO queues, Lambda, and DLQ) orchestrat
 - **Lambda** - event consumers
 - **DLQ** - failed message isolation and reprocessing
 
+## Dependencies
+
+- **[AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html)** (`aws-cdk`, `aws-cdk-lib`) - defines and deploys the infrastructure stacks
+- **[aws-cdk-local](https://github.com/localstack/aws-cdk-local)** - wraps the CDK CLI to target LocalStack instead of AWS
+- **[AWS Lambda Powertools for TypeScript](https://docs.aws.amazon.com/powertools/typescript/latest/)** - structured logging (`@aws-lambda-powertools/logger`) and SQS batch processing with partial failure reporting (`@aws-lambda-powertools/batch`)
+- **[tsx](https://github.com/privatenumber/tsx)** - runs TypeScript scripts directly without a build step
+
 ## Getting Started
 
 The only prerequisite is **Docker**. Each script spins up a LocalStack container, deploys the CDK stack, runs the simulation, and prints the logs - all automatically.
