@@ -1,13 +1,22 @@
 {
   "name": "chronological",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Demo: chronological event ordering with DLQ reprocessing",
+  "license": "MIT",
+  "author": "Adran Carnavale",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cdk": "cdk",
+    "cdklocal": "cdklocal",
+    "simulate": "tsx scripts/simulate.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs"
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "aws-cdk": "^2.1111.0",
+    "aws-cdk-lib": "^2.243.0",
+    "aws-cdk-local": "^3.0.1",
+    "constructs": "^10.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
 }
