@@ -37,6 +37,7 @@ The architecture uses AWS services (SQS FIFO queues, Lambda, and DLQ) orchestrat
 - **[AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/home.html)** (`aws-cdk`, `aws-cdk-lib`) - defines and deploys the infrastructure stacks
 - **[aws-cdk-local](https://github.com/localstack/aws-cdk-local)** - wraps the CDK CLI to target LocalStack instead of AWS
 - **[AWS Lambda Powertools for TypeScript](https://docs.aws.amazon.com/powertools/typescript/latest/)** - structured logging (`@aws-lambda-powertools/logger`) and SQS batch processing with partial failure reporting (`@aws-lambda-powertools/batch`)
+- **[AWS SDK for JavaScript v3 - SQS](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/client/sqs/)** (`@aws-sdk/client-sqs`) - used by the ingestion Lambda to send timestamped messages to SQS
 - **[tsx](https://github.com/privatenumber/tsx)** - runs TypeScript scripts directly without a build step
 
 ## Getting Started
