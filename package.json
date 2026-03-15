@@ -12,6 +12,8 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
+    "wrong": "./run.sh WrongStack",
+    "correct": "./run.sh CorrectStack",
     "simulate": "tsx scripts/simulate/main.ts",
     "typecheck": "tsgo --noEmit"
   },

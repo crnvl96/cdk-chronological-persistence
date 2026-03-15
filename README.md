@@ -86,10 +86,10 @@ Then run either demo:
 
 ```bash
 # See the problem: events end up out of order after DLQ reprocessing
-docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chronological ./run-wrong.sh
+docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chronological WrongStack
 
 # See the solution: events maintain correct chronological order
-docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chronological ./run-correct.sh
+docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chronological CorrectStack
 ```
 
 > `--network=host` lets the container reach LocalStack on `localhost:4566`.
@@ -99,8 +99,8 @@ docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chro
 
 ```bash
 npm install
-./run-wrong.sh
-./run-correct.sh
+./run.sh WrongStack
+./run.sh CorrectStack
 ```
 
 ### What to expect
@@ -109,8 +109,8 @@ Each script is self-contained - it starts a LocalStack container, deploys infras
 
 The scripts send 3 webhook events in order. Event 1 is designed to fail and go to the Dead Letter Queue. After reprocessing:
 
-- **`run-wrong.sh`** - events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
-- **`run-correct.sh`** - events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
+- **`npm run wrong`** - events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
+- **`npm run correct`** - events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
 
 ## License
 

@@ -18,4 +18,4 @@ RUN npm ci
 COPY . .
 RUN npx cdk synth --quiet
 
-ENTRYPOINT ["bash"]
+ENTRYPOINT ["bash", "run.sh"]
