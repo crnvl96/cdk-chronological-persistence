@@ -8,11 +8,12 @@
   "scripts": {
     "cdk": "cdk",
     "cdklocal": "cdklocal",
-    "simulate": "tsx scripts/simulate.ts",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "simulate": "tsx scripts/simulate.ts",
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "@aws-lambda-powertools/batch": "^2.31.0",
@@ -22,6 +23,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.161",
     "@types/node": "^25.5.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260314.1",
     "aws-cdk": "^2.1111.0",
     "aws-cdk-lib": "^2.243.0",
     "aws-cdk-local": "^3.0.1",
@@ -29,7 +31,6 @@
     "oxfmt": "^0.40.0",
     "oxlint": "^1.55.0",
     "oxlint-tsgolint": "^0.16.0",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "tsx": "^4.21.0"
   }
 }
