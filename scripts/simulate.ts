@@ -57,7 +57,7 @@ async function getApiUrl(stackName: StackName): Promise<string> {
     throw new Error("Could not parse OutputValue from DescribeStacks response");
   }
 
-  return valueMatch[1];
+  return valueMatch[1]!;
 }
 
 async function sendEvents(apiUrl: string): Promise<void> {
@@ -217,9 +217,7 @@ function printResults(events: LogEvent[], stackName: StackName): void {
     JSON.stringify(orderSequence) === JSON.stringify([1, 2, 3]);
 
   if (isChronological) {
-    console.log(
-      "  VERDICT: Chronological order PRESERVED [1, 2, 3]",
-    );
+    console.log("  VERDICT: Chronological order PRESERVED [1, 2, 3]");
     console.log("");
     console.log(
       "  Event 1 was reprocessed from the DLQ, but its received_at still reflects",
