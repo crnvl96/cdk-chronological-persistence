@@ -69,20 +69,48 @@ Since API Gateway calls SQS directly (no Lambda in between), it needs to speak S
 
 ## Getting Started
 
-The only prerequisite is **Docker**. Each script spins up a LocalStack container, deploys the CDK stack, runs the simulation, and prints the logs - all automatically.
+### Prerequisites
+
+- **Docker** - the only requirement. Everything else runs inside containers.
+- **Node.js 24+** - only if running the scripts directly on your machine (without Docker).
+
+### Option 1: Run with Docker (recommended)
+
+Build the image once — this pre-installs all dependencies, pre-synthesizes the CDK stacks, and caches the LocalStack image so subsequent runs start fast:
 
 ```bash
-# See what happens when ordering is NOT handled correctly
-./run-wrong.sh
+docker build -t chronological .
+```
 
-# See the correct approach with proper chronological guarantees
+Then run either demo:
+
+```bash
+# See the problem: events end up out of order after DLQ reprocessing
+docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chronological ./run-wrong.sh
+
+# See the solution: events maintain correct chronological order
+docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chronological ./run-correct.sh
+```
+
+> `--network=host` lets the container reach LocalStack on `localhost:4566`.
+> `-v /var/run/docker.sock` lets it manage the LocalStack container.
+
+### Option 2: Run directly
+
+```bash
+npm install
+./run-wrong.sh
 ./run-correct.sh
 ```
 
-Compare the logs from both runs to observe:
+### What to expect
 
-- **`run-wrong.sh`** - events processed out of order, inconsistent state after failures.
-- **`run-correct.sh`** - strict ordering preserved, failed messages block their group until resolved.
+Each script is self-contained — it starts a LocalStack container, deploys infrastructure, sends events, waits for processing, and prints results. Everything is cleaned up automatically on exit.
+
+The scripts send 3 webhook events in order. Event 1 is designed to fail and go to the Dead Letter Queue. After reprocessing:
+
+- **`run-wrong.sh`** — events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
+- **`run-correct.sh`** — events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
 
 ## License
 

@@ -8,8 +8,8 @@ import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 
 export class CorrectStack extends Stack {
-  private readonly DLQ_TIMEOUT = 30;
-  private readonly QUEUE_TIMEOUT = 30;
+  private readonly DLQ_TIMEOUT = 10;
+  private readonly QUEUE_TIMEOUT = 10;
   private readonly INGESTION_TIMEOUT = 10;
   private readonly PROCESSOR_TIMEOUT = 10;
   private readonly DLQ_PROCESSOR_TIMEOUT = 10;
