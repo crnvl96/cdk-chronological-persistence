@@ -12,7 +12,7 @@
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
-    "simulate": "tsx scripts/simulate.ts",
+    "simulate": "tsx scripts/simulate/main.ts",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
