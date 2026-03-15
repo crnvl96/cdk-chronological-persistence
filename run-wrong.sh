@@ -59,7 +59,7 @@ cat <<'HEADER'
   The problem:
     - The processor sets "received_at = Date.now()" when it processes a message.
     - If a message fails and goes to the Dead Letter Queue (DLQ), it gets
-      reprocessed LATER — and "received_at" is set to that later time.
+      reprocessed LATER - and "received_at" is set to that later time.
     - Result: the event that arrived FIRST now appears LAST when you sort
       by received_at.
 
@@ -68,7 +68,7 @@ cat <<'HEADER'
     - Event 1 is designed to FAIL on purpose, so it goes to the DLQ.
     - Events 2 and 3 process normally.
     - When Event 1 is reprocessed from the DLQ, it gets a NEW received_at
-      timestamp — much later than Events 2 and 3.
+      timestamp - much later than Events 2 and 3.
     - Sorting by received_at gives [2, 3, 1] instead of [1, 2, 3].
 
 ================================================================================

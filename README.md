@@ -33,13 +33,13 @@ The project includes two CDK stacks that demonstrate the difference:
 | API Gateway integration        | `AwsIntegration` (direct to SQS)  | `LambdaIntegration` (to ingestion Lambda)           |
 | VTL mapping template           | Yes                               | No                                                  |
 | IAM role for API Gateway → SQS | Manually created                  | Not needed                                          |
-| Ingestion Lambda               | None                              | Yes — stamps `received_at`, sends to SQS            |
+| Ingestion Lambda               | None                              | Yes - stamps `received_at`, sends to SQS            |
 | SQS permissions                | Granted to API Gateway role       | Granted to ingestion Lambda via `grantSendMessages` |
 | `@aws-sdk/client-sqs` usage    | No (API GW talks to SQS natively) | Yes (ingestion Lambda sends messages)               |
 
-**Wrong Stack** — API Gateway sends the payload directly to SQS. The processing Lambdas set `received_at = Date.now()` at processing time. If an event fails and gets reprocessed from the DLQ later, its `received_at` reflects reprocessing time, breaking chronological order.
+**Wrong Stack** - API Gateway sends the payload directly to SQS. The processing Lambdas set `received_at = Date.now()` at processing time. If an event fails and gets reprocessed from the DLQ later, its `received_at` reflects reprocessing time, breaking chronological order.
 
-**Correct Stack** — API Gateway invokes an Ingestion Lambda first, which reads `requestContext.requestTimeEpoch` (the true arrival time) and embeds it as `received_at` in the message body before sending to SQS. Downstream Lambdas just read this pre-stamped value. Even after DLQ reprocessing, the original arrival time is preserved.
+**Correct Stack** - API Gateway invokes an Ingestion Lambda first, which reads `requestContext.requestTimeEpoch` (the true arrival time) and embeds it as `received_at` in the message body before sending to SQS. Downstream Lambdas just read this pre-stamped value. Even after DLQ reprocessing, the original arrival time is preserved.
 
 ### VTL Mapping Templates
 
@@ -76,7 +76,7 @@ Since API Gateway calls SQS directly (no Lambda in between), it needs to speak S
 
 ### Option 1: Run with Docker (recommended)
 
-Build the image once — this pre-installs all dependencies, pre-synthesizes the CDK stacks, and caches the LocalStack image so subsequent runs start fast:
+Build the image once - this pre-installs all dependencies, pre-synthesizes the CDK stacks, and caches the LocalStack image so subsequent runs start fast:
 
 ```bash
 docker build -t chronological .
@@ -105,12 +105,12 @@ npm install
 
 ### What to expect
 
-Each script is self-contained — it starts a LocalStack container, deploys infrastructure, sends events, waits for processing, and prints results. Everything is cleaned up automatically on exit.
+Each script is self-contained - it starts a LocalStack container, deploys infrastructure, sends events, waits for processing, and prints results. Everything is cleaned up automatically on exit.
 
 The scripts send 3 webhook events in order. Event 1 is designed to fail and go to the Dead Letter Queue. After reprocessing:
 
-- **`run-wrong.sh`** — events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
-- **`run-correct.sh`** — events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
+- **`run-wrong.sh`** - events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
+- **`run-correct.sh`** - events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
 
 ## License
 

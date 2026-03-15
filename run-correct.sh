@@ -58,8 +58,8 @@ cat <<'HEADER'
 
   The fix:
     - A dedicated Ingestion Lambda sits between API Gateway and SQS.
-    - It reads "requestTimeEpoch" from the API Gateway context — this is the
-      exact moment the HTTP request arrived — and embeds it as "received_at"
+    - It reads "requestTimeEpoch" from the API Gateway context - this is the
+      exact moment the HTTP request arrived - and embeds it as "received_at"
       in the message body.
     - Both the Processor and DLQ Processor read "received_at" from the message
       body. They NEVER set their own timestamp.
@@ -70,7 +70,7 @@ cat <<'HEADER'
     - Same setup: 3 events, Event 1 fails on purpose and goes to the DLQ.
     - This time, when Event 1 is reprocessed from the DLQ, it KEEPS its
       original received_at timestamp from when it first arrived.
-    - Sorting by received_at gives [1, 2, 3] — correct chronological order.
+    - Sorting by received_at gives [1, 2, 3] - correct chronological order.
 
 ================================================================================
 
