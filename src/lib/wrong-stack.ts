@@ -44,7 +44,7 @@ export class WrongStack extends Stack {
 
   private createProcessor(queue: sqs.Queue): void {
     const processorFn = new lambda.NodejsFunction(this, "ProcessorFn", {
-      entry: "lambdas/wrong/processor.ts",
+      entry: "src/lambdas/wrong/processor.ts",
       functionName: "wrong-processor",
       handler: "handler",
       runtime: lambdaBase.Runtime.NODEJS_24_X,
@@ -61,7 +61,7 @@ export class WrongStack extends Stack {
 
   private createDLQProcessor(dlq: sqs.Queue): void {
     const dlqProcessorFn = new lambda.NodejsFunction(this, "DlqProcessorFn", {
-      entry: "lambdas/wrong/dlq-processor.ts",
+      entry: "src/lambdas/wrong/dlq-processor.ts",
       functionName: "wrong-dlq-processor",
       handler: "handler",
       runtime: lambdaBase.Runtime.NODEJS_24_X,

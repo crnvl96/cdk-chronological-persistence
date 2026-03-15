@@ -45,7 +45,7 @@ export class CorrectStack extends Stack {
 
   private createIngestion(queue: sqs.Queue): lambda.NodejsFunction {
     const ingestionFn = new lambda.NodejsFunction(this, "IngestionFn", {
-      entry: "lambdas/correct/ingestion.ts",
+      entry: "src/lambdas/correct/ingestion.ts",
       environment: {
         QUEUE_URL: queue.queueUrl,
       },
@@ -62,7 +62,7 @@ export class CorrectStack extends Stack {
 
   private createProcessor(queue: sqs.Queue): void {
     const processorFn = new lambda.NodejsFunction(this, "ProcessorFn", {
-      entry: "lambdas/correct/processor.ts",
+      entry: "src/lambdas/correct/processor.ts",
       functionName: "correct-processor",
       handler: "handler",
       runtime: lambdaBase.Runtime.NODEJS_24_X,
@@ -79,7 +79,7 @@ export class CorrectStack extends Stack {
 
   private createDLQProcessor(dlq: sqs.Queue): void {
     const dlqProcessorFn = new lambda.NodejsFunction(this, "DlqProcessorFn", {
-      entry: "lambdas/correct/dlq-processor.ts",
+      entry: "src/lambdas/correct/dlq-processor.ts",
       functionName: "correct-dlq-processor",
       handler: "handler",
       runtime: lambdaBase.Runtime.NODEJS_24_X,
