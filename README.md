@@ -24,6 +24,33 @@ The architecture uses AWS services (SQS FIFO queues, Lambda, and DLQ) orchestrat
 - How can we design a DLQ reprocessing strategy that replays failed messages **in order** and blocks subsequent messages from the same group until the failure is resolved?
 - What are the trade-offs between strict ordering and throughput?
 
+## Stack Comparison
+
+The project includes two CDK stacks that demonstrate the difference:
+
+| Aspect                         | Wrong Stack                       | Correct Stack                                       |
+| ------------------------------ | --------------------------------- | --------------------------------------------------- |
+| API Gateway integration        | `AwsIntegration` (direct to SQS)  | `LambdaIntegration` (to ingestion Lambda)           |
+| VTL mapping template           | Yes                               | No                                                  |
+| IAM role for API Gateway → SQS | Manually created                  | Not needed                                          |
+| Ingestion Lambda               | None                              | Yes — stamps `received_at`, sends to SQS            |
+| SQS permissions                | Granted to API Gateway role       | Granted to ingestion Lambda via `grantSendMessages` |
+| `@aws-sdk/client-sqs` usage    | No (API GW talks to SQS natively) | Yes (ingestion Lambda sends messages)               |
+
+**Wrong Stack** — API Gateway sends the payload directly to SQS. The processing Lambdas set `received_at = Date.now()` at processing time. If an event fails and gets reprocessed from the DLQ later, its `received_at` reflects reprocessing time, breaking chronological order.
+
+**Correct Stack** — API Gateway invokes an Ingestion Lambda first, which reads `requestContext.requestTimeEpoch` (the true arrival time) and embeds it as `received_at` in the message body before sending to SQS. Downstream Lambdas just read this pre-stamped value. Even after DLQ reprocessing, the original arrival time is preserved.
+
+### VTL Mapping Templates
+
+VTL (Velocity Template Language) mapping templates are used by API Gateway to transform request/response payloads between the client and the backend integration. In the wrong stack, the VTL template converts the incoming JSON body into the URL-encoded form that the SQS `SendMessage` API expects:
+
+```
+Action=SendMessage&MessageBody=$input.body
+```
+
+Since API Gateway calls SQS directly (no Lambda in between), it needs to speak SQS's native HTTP API format. The correct stack doesn't need VTL because it routes through a Lambda instead, which uses the AWS SDK to call SQS programmatically.
+
 ## Tech Stack
 
 - **AWS CDK** (TypeScript) - infrastructure as code
