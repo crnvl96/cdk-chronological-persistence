@@ -13,12 +13,12 @@
       "ESNext.Collection",
       "ESNext.Error",
       "ESNext.Iterator",
-      "ESNext.Promise"
+      "ESNext.Promise",
     ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "nodenext",
     "noImplicitReturns": true,
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
@@ -34,9 +34,8 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
-    }
-  }
+      "@/*": ["./src/*"],
+    },
+  },
 }
