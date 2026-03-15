@@ -8,7 +8,7 @@ export CDK_DISABLE_LEGACY_EXPORT_WARNING=1
 cleanup() {
   echo ""
   echo "Tearing down containers..."
-  docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
+  docker rm -f $(docker ps -aq --filter "name=$CONTAINER_NAME") 2>/dev/null || true
 }
 trap cleanup EXIT
 

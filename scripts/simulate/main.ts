@@ -86,7 +86,7 @@ export class Simulate {
 
       this.printIndented(
         `Event ${event.order}: sending...${failNote}`,
-        `Sending Event ${event} to ${eventsUrl}`,
+        `Sending Event to ${eventsUrl}`,
       );
 
       const response = await fetch(eventsUrl, {
@@ -260,7 +260,12 @@ export class Simulate {
     message: string,
     source: string,
   ): LogEvent | undefined {
-    const parsed = JSON.parse(message) as ParsedLogMessage;
+    let parsed: ParsedLogMessage;
+    try {
+      parsed = JSON.parse(message) as ParsedLogMessage;
+    } catch {
+      return undefined;
+    }
 
     if (this.isProcessedEvent(parsed)) {
       return { ...parsed, source };
@@ -304,7 +309,7 @@ export class Simulate {
     this.printDivider(totalWidth);
 
     for (const row of rows) {
-      console.log(`  ${formatRow(row)}`);
+      this.printIndented(formatRow(row));
     }
   }
 

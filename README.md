@@ -15,12 +15,12 @@ This project explores a practical pattern for solving both problems together:
 1. **Guaranteed ordering** - ensuring events for a given entity are processed in the exact sequence they were produced.
 2. **DLQ reprocessing without ordering violations** - when a message fails and lands in a Dead Letter Queue, replaying it back into the pipeline without breaking the chronological guarantees for subsequent messages.
 
-The architecture uses AWS services (SQS FIFO queues, Lambda, and DLQ) orchestrated via CDK, with a simulation script (`npm run simulate`) to demonstrate the behavior end-to-end.
+The architecture uses AWS services (SQS queues, Lambda, and DLQ) orchestrated via CDK, with a simulation script (`npm run simulate`) to demonstrate the behavior end-to-end.
 
 ### Key questions we investigate
 
-- How do SQS FIFO queues and message group IDs enforce per-entity ordering?
-- What happens when a message in the middle of a sequence fails - how does the FIFO queue behave?
+- How do SQS queues and message group IDs enforce per-entity ordering?
+- What happens when a message in the middle of a sequence fails - how does the queue behave?
 - How can we design a DLQ reprocessing strategy that replays failed messages **in order** and blocks subsequent messages from the same group until the failure is resolved?
 - What are the trade-offs between strict ordering and throughput?
 
@@ -55,7 +55,7 @@ Since API Gateway calls SQS directly (no Lambda in between), it needs to speak S
 
 - **AWS CDK** (TypeScript) - infrastructure as code
 - **LocalStack** via `aws-cdk-local` - local development and testing without an AWS account
-- **SQS FIFO** - ordered message delivery
+- **SQS** - message delivery
 - **Lambda** - event consumers
 - **DLQ** - failed message isolation and reprocessing
 
@@ -72,9 +72,8 @@ Since API Gateway calls SQS directly (no Lambda in between), it needs to speak S
 ### Prerequisites
 
 - **Docker** - the only requirement. Everything else runs inside containers.
-- **Node.js 24+** - only if running the scripts directly on your machine (without Docker).
 
-### Option 1: Run with Docker (recommended)
+### Run with Docker
 
 Build the image once - this pre-installs all dependencies, pre-synthesizes the CDK stacks, and caches the LocalStack image so subsequent runs start fast:
 
@@ -95,22 +94,14 @@ docker run --rm --network=host -v /var/run/docker.sock:/var/run/docker.sock chro
 > `--network=host` lets the container reach LocalStack on `localhost:4566`.
 > `-v /var/run/docker.sock` lets it manage the LocalStack container.
 
-### Option 2: Run directly
-
-```bash
-npm install
-./run.sh WrongStack
-./run.sh CorrectStack
-```
-
 ### What to expect
 
 Each script is self-contained - it starts a LocalStack container, deploys infrastructure, sends events, waits for processing, and prints results. Everything is cleaned up automatically on exit.
 
 The scripts send 3 webhook events in order. Event 1 is designed to fail and go to the Dead Letter Queue. After reprocessing:
 
-- **`npm run wrong`** - events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
-- **`npm run correct`** - events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
+- **`WrongStack`** - events appear as `[2, 3, 1]` when sorted by `received_at`, because the timestamp was set at reprocessing time, not arrival time.
+- **`CorrectStack`** - events appear as `[1, 2, 3]`, because the arrival timestamp was captured before the event entered the queue.
 
 ## License
 
